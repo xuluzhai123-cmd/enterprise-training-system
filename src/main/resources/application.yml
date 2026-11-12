@@ -1,0 +1,75 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+ai:
+  base-url: ${AI_BASE_URL:https://api.deepseek.com}
+  api-key: ${AI_API_KEY:}
+  model: ${AI_MODEL:deepseek-chat}
+  timeout-seconds: 30
+  max-retries: 2
+  temperature: 0.3
+  max-tokens: 800
+  mock-when-no-key: true
+
+spring:
+  application:
+    name: etm
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 本机 MySQL 5.7.15，字符集 utf8mb4
+    url: jdbc:mysql://localhost:3306/enterprise_training?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: ${DB_PASSWORD:xzn051222}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+  web:
+    resources:
+      # 前端打包后的 dist 会放到 static 目录
+      static-locations: classpath:/static/
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.etm.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    # 开发期打印 SQL，上线删掉这行
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+sa-token:
+  token-name: satoken
+  # token 有效期 24 小时
+  timeout: 86400
+  active-timeout: -1
+  is-concurrent: true
+  is-share: false
+  token-style: uuid
+  is-log: false
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    root: info
+    com.etm: debug
